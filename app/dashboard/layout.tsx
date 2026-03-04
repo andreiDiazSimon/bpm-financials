@@ -4,20 +4,20 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  HandCoins,
+  PieChart,
+  Receipt,
+  BookOpen,
   BarChart3,
-  LayoutDashboard,
-  Users,
-  FolderKanban,
-  FileText,
-  LogOut,
+  LogOut
 } from "lucide-react";
 
 const tabs = [
-  { name: "Module 1", href: "/dashboard", icon: BarChart3 },
-  { name: "Module 2", href: "/dashboard/module2", icon: LayoutDashboard },
-  { name: "Module 3", href: "/dashboard/module3", icon: Users },
-  { name: "Module 4", href: "/dashboard/module4", icon: FolderKanban },
-  { name: "Module 5", href: "/dashboard/module5", icon: FileText },
+  { name: "Collections Management", href: "/dashboard", icon: HandCoins },
+  { name: "Budget and Cost Allocation", href: "/dashboard/module2", icon: PieChart },
+  { name: "Expense Tracking & Tax", href: "/dashboard/module3", icon: Receipt },
+  { name: "General Ledger", href: "/dashboard/module4", icon: BookOpen },
+  { name: "Financial Reporting", href: "/dashboard/module5", icon: BarChart3 },
 ];
 
 export default function DashboardLayout({
@@ -62,7 +62,7 @@ export default function DashboardLayout({
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full">
         {/* Logo/Header */}
         <div className="px-6 py-4 border-b border-gray-200">
-          <h1 className="text-xl text-[#1a1a1a] font-semibold">Dashboard</h1>
+          <h1 className="text-xl text-[#1a1a1a] font-semibold">Financials: Crane and Trucking</h1>
         </div>
 
         {/* Navigation Tabs */}

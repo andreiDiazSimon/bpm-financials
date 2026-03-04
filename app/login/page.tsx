@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -9,29 +8,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  // async function handleSubmit(e: React.FormEvent) {
-  //   e.preventDefault();
-  //   setIsLoading(true);
-
-  //   // const result = await signIn("credentials", {
-  //   //   email,
-  //   //   password,
-  //   //   redirect: true,
-  //   //   callbackUrl: "/dashboard",
-  //   // });
-
-  //   const result = await fetch("/api/login", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ email, password }),
-  //   });
-
-  //   router.push("/verify-otp");
-
-  //   console.log(result);
-  //   setIsLoading(false);
-  // }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,52 +29,68 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f2f2f2] px-4">
-      <div className="w-full max-w-[440px]">
-        <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl text-[#1a1a1a] font-semibold mb-1">
-              Sign in
-            </h1>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#eef2f7] to-[#dbe4f0] px-4">
+      <div className="w-full max-w-md">
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Logo / Branding */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-[#1a1a1a] tracking-tight">
+            Financials
+          </h1>
+          <p className="text-sm text-[#4b5563] mt-1">
+            Crane and Trucking Management System
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
+
+          <h2 className="text-xl font-semibold text-[#1a1a1a] mb-6 text-center">
+            Sign in to your account
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Email Address
+              </label>
               <input
                 type="email"
-                placeholder="Email"
+                placeholder="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2.5 bg-white border border-[#8c8c8c] rounded-sm text-[#1a1a1a] placeholder-[#5c5c5c] focus:outline-none focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8] transition-colors duration-200 text-sm"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0067b8] focus:border-[#0067b8] transition"
                 required
               />
             </div>
 
             <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">
+                Password
+              </label>
               <input
                 type="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2.5 bg-white border border-[#8c8c8c] rounded-sm text-[#1a1a1a] placeholder-[#5c5c5c] focus:outline-none focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8] transition-colors duration-200 text-sm"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0067b8] focus:border-[#0067b8] transition"
                 required
               />
             </div>
 
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-2.5 px-4 bg-[#0067b8] hover:bg-[#005a9e] text-white text-sm font-semibold rounded-sm transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-2.5 bg-[#0067b8] hover:bg-[#005a9e] text-white font-semibold rounded-md transition duration-200 disabled:opacity-60"
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
+            </button>
           </form>
         </div>
 
-        <div className="mt-4 text-center">
-          <p className="text-xs text-[#5c5c5c]">© Crane and Trucking</p>
+        {/* Footer */}
+        <div className="mt-6 text-center text-xs text-gray-500">
+          © {new Date().getFullYear()} Financials: Crane and Trucking
         </div>
       </div>
     </div>
