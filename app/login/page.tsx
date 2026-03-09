@@ -1,6 +1,16 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { 
+  Mail, 
+  Lock, 
+  ArrowRight, 
+  Loader2, 
+  Eye, 
+  EyeOff,
+  Building2,
+  Shield
+} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -8,6 +18,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,70 +41,245 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#eef2f7] to-[#dbe4f0] px-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen grid lg:grid-cols-2 bg-slate-950">
 
-        {/* Logo / Branding */}
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-[#1a1a1a] tracking-tight">
-            Financials
+      {/* LEFT SIDE - IMAGE / BRANDING */}
+      <div className="relative hidden lg:flex items-center justify-center overflow-hidden">
+        
+        {/* Background Image */}
+        <img
+          src="/crane.jpg"
+          alt="Crane and trucking operations"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" />
+
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-cyan-500/10 via-transparent to-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 text-center px-12 text-white max-w-lg">
+
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25">
+              <Building2 className="w-8 h-8" />
+            </div>
+          </div>
+
+          <h1 className="text-4xl font-bold mb-4 tracking-tight">
+            Crane & Trucking Financials
           </h1>
-          <p className="text-sm text-[#4b5563] mt-1">
-            Crane and Trucking Management System
+
+          <p className="text-slate-300 text-lg">
+            Manage invoices, payments, and operational costs for your crane
+            and trucking operations in one powerful platform.
           </p>
-        </div>
 
-        {/* Card */}
-        <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
-
-          <h2 className="text-xl font-semibold text-[#1a1a1a] mb-6 text-center">
-            Sign in to your account
-          </h2>
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0067b8] focus:border-[#0067b8] transition"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#0067b8] focus:border-[#0067b8] transition"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-2.5 bg-[#0067b8] hover:bg-[#005a9e] text-white font-semibold rounded-md transition duration-200 disabled:opacity-60"
-            >
-              {isLoading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-6 text-center text-xs text-gray-500">
-          © {new Date().getFullYear()} Financials: Crane and Trucking
         </div>
       </div>
+
+
+      {/* RIGHT SIDE - LOGIN */}
+      <div className="flex items-center justify-center px-6 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+        
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-cyan-500/10 via-transparent to-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/5 rounded-full blur-2xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-2xl" />
+        </div>
+
+        {/* Grid Pattern Overlay */}
+        <div 
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px'
+          }}
+        />
+
+        <div className="w-full max-w-md relative z-10">
+
+          {/* Logo / Branding - Mobile Only */}
+          <div className="text-center mb-8 lg:hidden">
+            <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/25">
+              <Building2 className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">
+              Crane & Trucking Financials
+            </h1>
+            <p className="text-sm text-slate-400 font-medium">
+              Crane and Trucking Management System
+            </p>
+          </div>
+
+          {/* LOGIN CARD */}
+          <div className="relative">
+            {/* Card Glow Effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000" />
+            
+            <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
+              {/* Card Header Accent */}
+              <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500" />
+              
+              <div className="p-8">
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <Shield className="w-5 h-5 text-blue-400" />
+                  <h2 className="text-lg font-semibold text-white">
+                    Sign in to your account
+                  </h2>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+
+                  {/* Email Input */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Email Address
+                    </label>
+                    <div 
+                      className={`relative group transition-all duration-300 ${
+                        focusedField === 'email' ? 'transform scale-[1.02]' : ''
+                      }`}
+                    >
+                      <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-300 ${
+                        focusedField === 'email' ? 'text-blue-400' : 'text-slate-500'
+                      }`}>
+                        <Mail className="w-5 h-5" />
+                      </div>
+                      <input
+                        type="email"
+                        placeholder="name@company.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onFocus={() => setFocusedField('email')}
+                        onBlur={() => setFocusedField(null)}
+                        className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl text-sm text-white placeholder-slate-500 
+                          focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 
+                          transition-all duration-300 hover:border-slate-500/50"
+                        required
+                      />
+                      <div className={`absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 pointer-events-none ${
+                        focusedField === 'email' ? 'opacity-100' : ''
+                      }`} />
+                    </div>
+                  </div>
+
+                  {/* Password Input */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider">
+                      Password
+                    </label>
+                    <div 
+                      className={`relative group transition-all duration-300 ${
+                        focusedField === 'password' ? 'transform scale-[1.02]' : ''
+                      }`}
+                    >
+                      <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-300 ${
+                        focusedField === 'password' ? 'text-blue-400' : 'text-slate-500'
+                      }`}>
+                        <Lock className="w-5 h-5" />
+                      </div>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onFocus={() => setFocusedField('password')}
+                        onBlur={() => setFocusedField(null)}
+                        className="w-full pl-10 pr-12 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl text-sm text-white placeholder-slate-500 
+                          focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 
+                          transition-all duration-300 hover:border-slate-500/50"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                      <div className={`absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 pointer-events-none ${
+                        focusedField === 'password' ? 'opacity-100' : ''
+                      }`} />
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="group relative w-full py-3.5 mt-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 
+                      text-white font-semibold rounded-xl transition-all duration-300 
+                      shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 
+                      disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-none
+                      overflow-hidden"
+                  >
+                    {/* Button Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    
+                    <span className="relative flex items-center justify-center gap-2">
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span>Signing in...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Sign In</span>
+                          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-700/50" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-2 bg-slate-900/80 text-slate-500">
+                      Secure Login
+                    </span>
+                  </div>
+                </div>
+
+                {/* Security Note */}
+                <div className="text-center">
+                  <p className="text-xs text-slate-500">
+                    Protected by industry-standard encryption
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-8 text-center">
+            <p className="text-xs text-slate-500">
+              © {new Date().getFullYear()} Financials: Crane and Trucking
+            </p>
+            <p className="text-[10px] text-slate-600 mt-1">
+              All rights reserved
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
