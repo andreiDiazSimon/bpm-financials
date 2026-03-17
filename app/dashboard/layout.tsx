@@ -28,60 +28,89 @@ export default function DashboardLayout({
   const { data: session, status } = useSession();
   const pathname = usePathname();
 
+  // 🔄 LOADING STATE (modernized)
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f2f2f2]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-[#0067b8] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-[#5c5c5c]">Loading...</p>
+          <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-400 text-sm">Loading...</p>
         </div>
       </div>
     );
   }
 
+  // 🔒 NO SESSION
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f2f2f2]">
-        <div className="bg-white rounded-lg shadow-sm p-8 border border-gray-200 text-center">
-          <h1 className="text-xl text-[#1a1a1a] font-semibold mb-4">Access Denied</h1>
-          <p className="text-[#5c5c5c] mb-4">Please sign in to access the dashboard.</p>
-          <a
-            href="/login"
-            className="inline-block px-6 py-2 bg-[#0067b8] hover:bg-[#005a9e] text-white text-sm font-semibold rounded-sm transition-colors"
-          >
-            Go to Login
-          </a>
+      <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+        <div className="relative max-w-md w-full">
+          {/* Glow */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-20" />
+
+          <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl p-8 text-center">
+            <h1 className="text-xl font-semibold text-white mb-3">
+              Access Denied
+            </h1>
+            <p className="text-sm text-slate-400 mb-6">
+              Please sign in to access the dashboard.
+            </p>
+
+            <a
+              href="/login"
+              className="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 
+              text-white text-sm font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/25"
+            >
+              Go to Login
+            </a>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f2f2f2] flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full">
-        {/* Logo/Header */}
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h1 className="text-xl text-[#1a1a1a] font-semibold">Financials: Crane and Trucking</h1>
+    <div className="min-h-screen flex bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 relative overflow-hidden">
+      {/* Background FX */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 blur-3xl" />
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-cyan-500/10 via-transparent to-blue-500/10 blur-3xl" />
+      </div>
+
+      {/* SIDEBAR */}
+      <aside className="w-64 bg-slate-900/80 backdrop-blur-xl border-r border-slate-700/50 flex flex-col fixed h-full z-10">
+        {/* Logo */}
+        <div className="px-6 py-5 border-b border-slate-700/50">
+          <h1 className="text-lg font-semibold text-white tracking-tight">
+            Crane & Trucking
+          </h1>
+          <p className="text-xs text-slate-400">
+            Financial Management
+          </p>
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="flex-1 px-4 py-4">
+        {/* NAV */}
+        <nav className="flex-1 px-3 py-4">
           <ul className="space-y-1">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = pathname === tab.href;
+
               return (
                 <li key={tab.href}>
                   <Link
                     href={tab.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-medium transition-colors ${
+                    className={`group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                       isActive
-                        ? "bg-[#0067b8] text-white"
-                        : "text-[#5c5c5c] hover:bg-[#f2f2f2] hover:text-[#1a1a1a]"
+                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25"
+                        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
+                    <Icon
+                      className={`w-5 h-5 transition-transform ${
+                        isActive ? "" : "group-hover:scale-110"
+                      }`}
+                    />
                     {tab.name}
                   </Link>
                 </li>
@@ -90,19 +119,20 @@ export default function DashboardLayout({
           </ul>
         </nav>
 
-        {/* User Info & Sign Out */}
-        <div className="px-4 py-4 border-t border-gray-200">
-          <div className="mb-3 px-4">
-            <p className="text-sm text-[#1a1a1a] font-medium truncate">
+        {/* USER */}
+        <div className="px-4 py-4 border-t border-slate-700/50">
+          <div className="mb-3 px-3">
+            <p className="text-sm text-white font-medium truncate">
               {session.user?.name || "User"}
             </p>
-            <p className="text-xs text-[#5c5c5c] truncate">
+            <p className="text-xs text-slate-400 truncate">
               {session.user?.email || ""}
             </p>
           </div>
+
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#5c5c5c] hover:bg-[#f2f2f2] hover:text-[#1a1a1a] rounded-sm transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-xl transition-all duration-300"
           >
             <LogOut className="w-5 h-5" />
             Sign out
@@ -110,9 +140,12 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 ml-64 p-6">
-        {children}
+      {/* MAIN */}
+      <main className="flex-1 ml-64 p-6 relative z-10">
+        {/* CONTENT CARD WRAPPER */}
+        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
+          {children}
+        </div>
       </main>
     </div>
   );

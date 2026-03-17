@@ -1,15 +1,15 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { 
-  Mail, 
-  Lock, 
-  ArrowRight, 
-  Loader2, 
-  Eye, 
+import {
+  Mail,
+  Lock,
+  ArrowRight,
+  Loader2,
+  Eye,
   EyeOff,
   Building2,
-  Shield
+  Shield,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -42,13 +42,11 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-slate-950">
-
       {/* LEFT SIDE - IMAGE / BRANDING */}
       <div className="relative hidden lg:flex items-center justify-center overflow-hidden">
-        
         {/* Background Image */}
         <img
-          src="/crane.jpg"
+          src="https://images.unsplash.com/photo-1539269071019-8bc6d57b0205?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Crane and trucking operations"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -56,15 +54,8 @@ export default function LoginPage() {
         {/* Overlay */}
         <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-sm" />
 
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-cyan-500/10 via-transparent to-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        </div>
-
         {/* Content */}
         <div className="relative z-10 text-center px-12 text-white max-w-lg">
-
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/25">
               <Building2 className="w-8 h-8" />
@@ -74,19 +65,11 @@ export default function LoginPage() {
           <h1 className="text-4xl font-bold mb-4 tracking-tight">
             Crane & Trucking Financials
           </h1>
-
-          <p className="text-slate-300 text-lg">
-            Manage invoices, payments, and operational costs for your crane
-            and trucking operations in one powerful platform.
-          </p>
-
         </div>
       </div>
 
-
       {/* RIGHT SIDE - LOGIN */}
       <div className="flex items-center justify-center px-6 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
-        
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 rounded-full blur-3xl animate-pulse" />
@@ -96,16 +79,15 @@ export default function LoginPage() {
         </div>
 
         {/* Grid Pattern Overlay */}
-        <div 
+        <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px'
+            backgroundSize: "50px 50px",
           }}
         />
 
         <div className="w-full max-w-md relative z-10">
-
           {/* Logo / Branding - Mobile Only */}
           <div className="text-center mb-8 lg:hidden">
             <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/25">
@@ -123,51 +105,49 @@ export default function LoginPage() {
           <div className="relative">
             {/* Card Glow Effect */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000" />
-            
+
             <div className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden">
               {/* Card Header Accent */}
               <div className="h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500" />
-              
+
               <div className="p-8">
-                <div className="flex items-center justify-center gap-2 mb-6">
-                  <Shield className="w-5 h-5 text-blue-400" />
-                  <h2 className="text-lg font-semibold text-white">
-                    Sign in to your account
-                  </h2>
-                </div>
-
                 <form onSubmit={handleSubmit} className="space-y-5">
-
                   {/* Email Input */}
                   <div className="space-y-1.5">
                     <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider">
                       Email Address
                     </label>
-                    <div 
+                    <div
                       className={`relative group transition-all duration-300 ${
-                        focusedField === 'email' ? 'transform scale-[1.02]' : ''
+                        focusedField === "email" ? "transform scale-[1.02]" : ""
                       }`}
                     >
-                      <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-300 ${
-                        focusedField === 'email' ? 'text-blue-400' : 'text-slate-500'
-                      }`}>
+                      <div
+                        className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-300 ${
+                          focusedField === "email"
+                            ? "text-blue-400"
+                            : "text-slate-500"
+                        }`}
+                      >
                         <Mail className="w-5 h-5" />
                       </div>
                       <input
                         type="email"
-                        placeholder="name@company.com"
+                        placeholder="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        onFocus={() => setFocusedField('email')}
+                        onFocus={() => setFocusedField("email")}
                         onBlur={() => setFocusedField(null)}
                         className="w-full pl-10 pr-4 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl text-sm text-white placeholder-slate-500 
                           focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 
                           transition-all duration-300 hover:border-slate-500/50"
                         required
                       />
-                      <div className={`absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 pointer-events-none ${
-                        focusedField === 'email' ? 'opacity-100' : ''
-                      }`} />
+                      <div
+                        className={`absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 pointer-events-none ${
+                          focusedField === "email" ? "opacity-100" : ""
+                        }`}
+                      />
                     </div>
                   </div>
 
@@ -176,14 +156,20 @@ export default function LoginPage() {
                     <label className="block text-xs font-medium text-slate-400 uppercase tracking-wider">
                       Password
                     </label>
-                    <div 
+                    <div
                       className={`relative group transition-all duration-300 ${
-                        focusedField === 'password' ? 'transform scale-[1.02]' : ''
+                        focusedField === "password"
+                          ? "transform scale-[1.02]"
+                          : ""
                       }`}
                     >
-                      <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-300 ${
-                        focusedField === 'password' ? 'text-blue-400' : 'text-slate-500'
-                      }`}>
+                      <div
+                        className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-300 ${
+                          focusedField === "password"
+                            ? "text-blue-400"
+                            : "text-slate-500"
+                        }`}
+                      >
                         <Lock className="w-5 h-5" />
                       </div>
                       <input
@@ -191,7 +177,7 @@ export default function LoginPage() {
                         placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        onFocus={() => setFocusedField('password')}
+                        onFocus={() => setFocusedField("password")}
                         onBlur={() => setFocusedField(null)}
                         className="w-full pl-10 pr-12 py-3 bg-slate-800/50 border border-slate-600/50 rounded-xl text-sm text-white placeholder-slate-500 
                           focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 
@@ -209,9 +195,11 @@ export default function LoginPage() {
                           <Eye className="w-5 h-5" />
                         )}
                       </button>
-                      <div className={`absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 pointer-events-none ${
-                        focusedField === 'password' ? 'opacity-100' : ''
-                      }`} />
+                      <div
+                        className={`absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 pointer-events-none ${
+                          focusedField === "password" ? "opacity-100" : ""
+                        }`}
+                      />
                     </div>
                   </div>
 
@@ -227,7 +215,7 @@ export default function LoginPage() {
                   >
                     {/* Button Shine Effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                    
+
                     <span className="relative flex items-center justify-center gap-2">
                       {isLoading ? (
                         <>
@@ -244,24 +232,6 @@ export default function LoginPage() {
                   </button>
                 </form>
 
-                {/* Divider */}
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-700/50" />
-                  </div>
-                  <div className="relative flex justify-center text-xs">
-                    <span className="px-2 bg-slate-900/80 text-slate-500">
-                      Secure Login
-                    </span>
-                  </div>
-                </div>
-
-                {/* Security Note */}
-                <div className="text-center">
-                  <p className="text-xs text-slate-500">
-                    Protected by industry-standard encryption
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -275,11 +245,8 @@ export default function LoginPage() {
               All rights reserved
             </p>
           </div>
-
         </div>
-
       </div>
-
     </div>
   );
 }
