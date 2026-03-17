@@ -143,7 +143,7 @@ export default function DashboardLayout({
       {/* MAIN */}
       <main className="flex-1 ml-64 p-6 relative z-10">
         {/* CONTENT CARD WRAPPER */}
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
+        <div className="bg-white backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl">
           {children}
         </div>
       </main>
