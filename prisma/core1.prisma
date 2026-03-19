@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/client-core1"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Client {
+  id                Int        @id @default(autoincrement())
+  firstName         String
+  lastName          String
+  company           String
+  number            String
+  email             String     @unique
+  password          String
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime
+  bankAccountNumber String?
+  JobOrder          JobOrder[]
+  Rental            Rental[]
+}
+
+model JobOrder {
+  id           Int            @id @default(autoincrement())
+  rentalId     Int            @unique
+  clientId     Int
+  status       JobOrderStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  operatorId   String?
+  assignedAt   DateTime?
+  isDispatched Boolean        @default(false)
+  Client       Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  Rental       Rental         @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+}
+
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  expiresAt DateTime
+}
+
+model Rental {
+  id           Int          @id @default(autoincrement())
+  clientId     Int
+  vehicleId    Int
+  vehicleName  String
+  siteLocation String
+  status       RentalStatus @default(PENDING)
+  totalPrice   Float
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime
+  JobOrder     JobOrder?
+  Client       Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
+
+enum JobOrderStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RentalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}

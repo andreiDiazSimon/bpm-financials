@@ -1,0 +1,382 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/client-core3"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["core3", "public"]
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+
+  @@schema("public")
+}
+
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  expiresAt DateTime
+
+  @@schema("public")
+}
+
+model Contract {
+  id                Int            @id @default(autoincrement())
+  contractNumber    String         @unique
+  title             String
+  type              ContractType
+  status            ContractStatus @default(ACTIVE)
+  startDate         DateTime
+  endDate           DateTime
+  value             Decimal?       @db.Decimal(12, 2)
+  paymentTerms      String?
+  scopeOfWork       String?
+  documentUrl       String?
+  terminationClause String?
+  renewalTerms      String?
+  notes             String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime
+
+  @@schema("core3")
+}
+
+model Equipment {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  type                EquipmentType
+  model               String?
+  serialNumber        String?               @unique
+  manufacturer        String?
+  purchaseDate        DateTime?
+  currentHours        Float                 @default(0)
+  status              EquipmentStatus       @default(ACTIVE)
+  location            String?
+  notes               String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  MaintenanceLog      MaintenanceLog[]
+  MaintenanceSchedule MaintenanceSchedule[]
+
+  @@schema("core3")
+}
+
+model Invoice {
+  id              Int               @id @default(autoincrement())
+  invoiceNumber   String            @unique
+  clientId        String
+  projectName     String
+  description     String?
+  issueDate       DateTime          @default(now())
+  dueDate         DateTime
+  status          InvoiceStatus     @default(DRAFT)
+  subtotal        Decimal           @db.Decimal(10, 2)
+  taxRate         Decimal           @default(0) @db.Decimal(5, 2)
+  taxAmount       Decimal           @db.Decimal(10, 2)
+  totalAmount     Decimal           @db.Decimal(10, 2)
+  notes           String?
+  sentAt          DateTime?
+  paidAt          DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  InvoiceLineItem InvoiceLineItem[]
+  Payment         Payment[]
+
+  @@schema("core3")
+}
+
+model InvoiceLineItem {
+  id          Int     @id @default(autoincrement())
+  invoiceId   Int
+  description String
+  quantity    Decimal @db.Decimal(10, 2)
+  unitPrice   Decimal @db.Decimal(10, 2)
+  amount      Decimal @db.Decimal(10, 2)
+  Invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@schema("core3")
+}
+
+model MaintenanceLog {
+  id                  Int                   @id @default(autoincrement())
+  equipmentId         Int
+  scheduleId          Int?
+  title               String
+  description         String?
+  hoursAtMaintenance  Float
+  cost                Decimal?              @db.Decimal(10, 2)
+  performedBy         String?
+  partsReplaced       String?
+  notes               String?
+  completedAt         DateTime              @default(now())
+  Equipment           Equipment             @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  MaintenanceSchedule MaintenanceSchedule[]
+
+  @@schema("core3")
+}
+
+model MaintenanceSchedule {
+  id                Int               @id @default(autoincrement())
+  equipmentId       Int
+  title             String
+  description       String?
+  intervalHours     Float
+  intervalMonths    Int?
+  lastMaintenanceId Int?
+  nextDueHours      Float
+  nextDueDate       DateTime?
+  priority          Priority          @default(MEDIUM)
+  status            MaintenanceStatus @default(SCHEDULED)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime
+  Equipment         Equipment         @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  MaintenanceLog    MaintenanceLog?   @relation(fields: [lastMaintenanceId], references: [id])
+
+  @@schema("core3")
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  invoiceId     Int
+  amount        Decimal       @db.Decimal(10, 2)
+  paymentDate   DateTime      @default(now())
+  paymentMethod PaymentMethod
+  reference     String?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  Invoice       Invoice       @relation(fields: [invoiceId], references: [id])
+
+  @@schema("core3")
+}
+
+model Permit {
+  id                  Int          @id @default(autoincrement())
+  permitNumber        String       @unique
+  title               String
+  type                PermitType
+  issuingAuthority    String
+  status              PermitStatus @default(VALID)
+  issueDate           DateTime
+  expirationDate      DateTime
+  renewalReminderDays Int          @default(30)
+  projectName         String?
+  location            String?
+  documentUrl         String?
+  cost                Decimal?     @db.Decimal(10, 2)
+  notes               String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime
+
+  @@schema("core3")
+}
+
+enum ContractStatus {
+  DRAFT
+  PENDING_APPROVAL
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  RENEWED
+
+  @@schema("core3")
+}
+
+enum ContractType {
+  SERVICE_AGREEMENT
+  RENTAL_AGREEMENT
+  PROJECT_CONTRACT
+  MAINTENANCE_CONTRACT
+  SUPPLY_CONTRACT
+  PARTNERSHIP_AGREEMENT
+  OTHER
+
+  @@schema("core3")
+}
+
+enum EquipmentStatus {
+  ACTIVE
+  MAINTENANCE
+  RETIRED
+  OUT_OF_SERVICE
+
+  @@schema("core3")
+}
+
+enum EquipmentType {
+  CRANE
+  TRUCK
+  EXCAVATOR
+  FORKLIFT
+  GENERATOR
+  COMPRESSOR
+  OTHER
+
+  @@schema("core3")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  FINALIZED
+  SENT
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+
+  @@schema("core3")
+}
+
+enum MaintenanceStatus {
+  SCHEDULED
+  DUE
+  OVERDUE
+  COMPLETED
+  CANCELLED
+
+  @@schema("core3")
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  BANK_TRANSFER
+  CREDIT_CARD
+  DEBIT_CARD
+  ONLINE_PAYMENT
+
+  @@schema("core3")
+}
+
+enum PermitStatus {
+  VALID
+  EXPIRED
+  SUSPENDED
+  REVOKED
+  PENDING_RENEWAL
+
+  @@schema("core3")
+}
+
+enum PermitType {
+  BUSINESS_PERMIT
+  BUILDING_PERMIT
+  ENVIRONMENTAL_PERMIT
+  SAFETY_PERMIT
+  TRANSPORT_PERMIT
+  WORK_PERMIT
+  EQUIPMENT_CERTIFICATION
+  OTHER
+
+  @@schema("core3")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@schema("core3")
+}
+
+// ============== GENERAL LEDGER MODELS ==============
+
+model LedgerAccount {
+  id            Int              @id @default(autoincrement())
+  accountCode   String           @unique
+  accountName   String
+  accountType   LedgerAccountType
+  parentId      Int?
+  isActive      Boolean          @default(true)
+  description   String?
+  normalBalance NormalBalance    @default(DEBIT)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime
+  parent        LedgerAccount?   @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children      LedgerAccount[]  @relation("AccountHierarchy")
+  journalLines  JournalLineItem[]
+
+  @@schema("core3")
+  @@index([accountType])
+  @@index([parentId])
+}
+
+model JournalEntry {
+  id              Int               @id @default(autoincrement())
+  entryNumber     String            @unique
+  entryDate       DateTime
+  description     String
+  reference       String?
+  sourceType      JournalSourceType?
+  sourceId        String?
+  status          JournalEntryStatus @default(DRAFT)
+  totalDebit      Decimal           @default(0) @db.Decimal(15, 2)
+  totalCredit     Decimal           @default(0) @db.Decimal(15, 2)
+  createdAt       DateTime          @default(now())
+  createdBy       String?
+  updatedAt       DateTime
+  postedAt        DateTime?
+  JournalLineItem JournalLineItem[]
+
+  @@schema("core3")
+  @@index([entryDate])
+  @@index([status])
+  @@index([sourceType, sourceId])
+}
+
+model JournalLineItem {
+  id              Int           @id @default(autoincrement())
+  journalEntryId  Int
+  accountId       Int
+  debit           Decimal       @default(0) @db.Decimal(15, 2)
+  credit          Decimal       @default(0) @db.Decimal(15, 2)
+  description     String?
+  createdAt       DateTime      @default(now())
+  JournalEntry    JournalEntry  @relation(fields: [journalEntryId], references: [id], onDelete: Cascade)
+  LedgerAccount   LedgerAccount @relation(fields: [accountId], references: [id])
+
+  @@schema("core3")
+  @@index([journalEntryId])
+  @@index([accountId])
+}
+
+enum LedgerAccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+
+  @@schema("core3")
+}
+
+enum NormalBalance {
+  DEBIT
+  CREDIT
+
+  @@schema("core3")
+}
+
+enum JournalSourceType {
+  INVOICE
+  PAYMENT
+  EXPENSE
+  REIMBURSEMENT
+  MANUAL
+
+  @@schema("core3")
+}
+
+enum JournalEntryStatus {
+  DRAFT
+  POSTED
+  VOIDED
+  CANCELLED
+
+  @@schema("core3")
+}

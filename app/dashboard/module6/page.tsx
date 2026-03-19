@@ -58,152 +58,6 @@ export default function GeneralLedger() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
 
-  // Static demo data
-  const staticAccounts: LedgerAccount[] = [
-    { id: 1, accountCode: "1000", accountName: "Assets", accountType: "ASSET", parentId: null, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 2, accountCode: "1100", accountName: "Cash", accountType: "ASSET", parentId: 1, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 3, accountCode: "1101", accountName: "Cash on Hand", accountType: "ASSET", parentId: 2, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 4, accountCode: "1102", accountName: "Cash in Bank", accountType: "ASSET", parentId: 2, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 5, accountCode: "1200", accountName: "Accounts Receivable", accountType: "ASSET", parentId: 1, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 6, accountCode: "1300", accountName: "Equipment", accountType: "ASSET", parentId: 1, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 7, accountCode: "1400", accountName: "Prepaid Expenses", accountType: "ASSET", parentId: 1, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 8, accountCode: "2000", accountName: "Liabilities", accountType: "LIABILITY", parentId: null, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 9, accountCode: "2100", accountName: "Accounts Payable", accountType: "LIABILITY", parentId: 8, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 10, accountCode: "2200", accountName: "Notes Payable", accountType: "LIABILITY", parentId: 8, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 11, accountCode: "2300", accountName: "Accrued Expenses", accountType: "LIABILITY", parentId: 8, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 12, accountCode: "3000", accountName: "Equity", accountType: "EQUITY", parentId: null, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 13, accountCode: "3100", accountName: "Owner's Equity", accountType: "EQUITY", parentId: 12, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 14, accountCode: "3200", accountName: "Retained Earnings", accountType: "EQUITY", parentId: 12, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 15, accountCode: "4000", accountName: "Revenue", accountType: "REVENUE", parentId: null, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 16, accountCode: "4100", accountName: "Service Revenue", accountType: "REVENUE", parentId: 15, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 17, accountCode: "4200", accountName: "Rental Revenue", accountType: "REVENUE", parentId: 15, isActive: true, description: null, normalBalance: "CREDIT" },
-    { id: 18, accountCode: "5000", accountName: "Expenses", accountType: "EXPENSE", parentId: null, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 19, accountCode: "5100", accountName: "Direct Costs", accountType: "EXPENSE", parentId: 18, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 20, accountCode: "5200", accountName: "Operating Expenses", accountType: "EXPENSE", parentId: 18, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 21, accountCode: "5300", accountName: "Payroll Expenses", accountType: "EXPENSE", parentId: 20, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 22, accountCode: "5400", accountName: "Maintenance Expenses", accountType: "EXPENSE", parentId: 20, isActive: true, description: null, normalBalance: "DEBIT" },
-    { id: 23, accountCode: "5500", accountName: "Fuel Expenses", accountType: "EXPENSE", parentId: 20, isActive: true, description: null, normalBalance: "DEBIT" },
-  ];
-
-  const staticEntries: JournalEntry[] = [
-    {
-      id: 1,
-      entryNumber: "JE-000001",
-      entryDate: "2024-01-15",
-      description: "Received payment from client ABC Corp",
-      reference: "OR-001",
-      sourceType: "PAYMENT",
-      sourceId: "1",
-      status: "POSTED",
-      totalDebit: 50000,
-      totalCredit: 50000,
-      createdAt: "2024-01-15T10:00:00Z",
-      JournalLineItem: [
-        { id: 1, journalEntryId: 1, accountId: 4, debit: 50000, credit: 0, description: "Cash in Bank", account: staticAccounts[3] },
-        { id: 2, journalEntryId: 1, accountId: 5, debit: 0, credit: 50000, description: "Accounts Receivable", account: staticAccounts[4] },
-      ]
-    },
-    {
-      id: 2,
-      entryNumber: "JE-000002",
-      entryDate: "2024-01-20",
-      description: "Equipment rental service provided",
-      reference: "INV-001",
-      sourceType: "INVOICE",
-      sourceId: "1",
-      status: "POSTED",
-      totalDebit: 75000,
-      totalCredit: 75000,
-      createdAt: "2024-01-20T14:00:00Z",
-      JournalLineItem: [
-        { id: 3, journalEntryId: 2, accountId: 5, debit: 75000, credit: 0, description: "Accounts Receivable", account: staticAccounts[4] },
-        { id: 4, journalEntryId: 2, accountId: 16, debit: 0, credit: 75000, description: "Service Revenue", account: staticAccounts[15] },
-      ]
-    },
-    {
-      id: 3,
-      entryNumber: "JE-000003",
-      entryDate: "2024-02-01",
-      description: "Paid employee salaries",
-      reference: "PV-001",
-      sourceType: "EXPENSE",
-      sourceId: "1",
-      status: "POSTED",
-      totalDebit: 45000,
-      totalCredit: 45000,
-      createdAt: "2024-02-01T09:00:00Z",
-      JournalLineItem: [
-        { id: 5, journalEntryId: 3, accountId: 21, debit: 45000, credit: 0, description: "Payroll Expenses", account: staticAccounts[20] },
-        { id: 6, journalEntryId: 3, accountId: 4, debit: 0, credit: 45000, description: "Cash in Bank", account: staticAccounts[3] },
-      ]
-    },
-    {
-      id: 4,
-      entryNumber: "JE-000004",
-      entryDate: "2024-02-15",
-      description: "Fuel expenses for the month",
-      reference: "PV-002",
-      sourceType: "EXPENSE",
-      sourceId: "2",
-      status: "POSTED",
-      totalDebit: 15000,
-      totalCredit: 15000,
-      createdAt: "2024-02-15T11:00:00Z",
-      JournalLineItem: [
-        { id: 7, journalEntryId: 4, accountId: 23, debit: 15000, credit: 0, description: "Fuel Expenses", account: staticAccounts[22] },
-        { id: 8, journalEntryId: 4, accountId: 4, debit: 0, credit: 15000, description: "Cash in Bank", account: staticAccounts[3] },
-      ]
-    },
-    {
-      id: 5,
-      entryNumber: "JE-000005",
-      entryDate: "2024-03-01",
-      description: "Maintenance and repair services",
-      reference: "PV-003",
-      sourceType: "EXPENSE",
-      sourceId: "3",
-      status: "DRAFT",
-      totalDebit: 8500,
-      totalCredit: 8500,
-      createdAt: "2024-03-01T13:00:00Z",
-      JournalLineItem: [
-        { id: 9, journalEntryId: 5, accountId: 22, debit: 8500, credit: 0, description: "Maintenance Expenses", account: staticAccounts[21] },
-        { id: 10, journalEntryId: 5, accountId: 9, debit: 0, credit: 8500, description: "Accounts Payable", account: staticAccounts[8] },
-      ]
-    },
-    {
-      id: 6,
-      entryNumber: "JE-000006",
-      entryDate: "2024-03-10",
-      description: "Rental income from client XYZ Inc",
-      reference: "OR-002",
-      sourceType: "PAYMENT",
-      sourceId: "2",
-      status: "POSTED",
-      totalDebit: 120000,
-      totalCredit: 120000,
-      createdAt: "2024-03-10T15:00:00Z",
-      JournalLineItem: [
-        { id: 11, journalEntryId: 6, accountId: 4, debit: 120000, credit: 0, description: "Cash in Bank", account: staticAccounts[3] },
-        { id: 12, journalEntryId: 6, accountId: 17, debit: 0, credit: 120000, description: "Rental Revenue", account: staticAccounts[16] },
-      ]
-    },
-  ];
-
-  const staticBalances: AccountBalance[] = [
-    { accountId: 3, accountCode: "1101", accountName: "Cash on Hand", totalDebit: 25000, totalCredit: 0, balance: 25000 },
-    { accountId: 4, accountCode: "1102", accountName: "Cash in Bank", totalDebit: 254500, totalCredit: 60000, balance: 194500 },
-    { accountId: 5, accountCode: "1200", accountName: "Accounts Receivable", totalDebit: 75000, totalCredit: 50000, balance: 25000 },
-    { accountId: 6, accountCode: "1300", accountName: "Equipment", totalDebit: 500000, totalCredit: 0, balance: 500000 },
-    { accountId: 9, accountCode: "2100", accountName: "Accounts Payable", totalDebit: 0, credit: 8500, balance: -8500 },
-    { accountId: 14, accountCode: "3200", accountName: "Retained Earnings", totalDebit: 0, credit: 200000, balance: -200000 },
-    { accountId: 16, accountCode: "4100", accountName: "Service Revenue", totalDebit: 0, credit: 75000, balance: -75000 },
-    { accountId: 17, accountCode: "4200", accountName: "Rental Revenue", totalDebit: 0, credit: 120000, balance: -120000 },
-    { accountId: 21, accountCode: "5300", accountName: "Payroll Expenses", totalDebit: 45000, totalCredit: 0, balance: 45000 },
-    { accountId: 22, accountCode: "5400", accountName: "Maintenance Expenses", totalDebit: 8500, totalCredit: 0, balance: 8500 },
-    { accountId: 23, accountCode: "5500", accountName: "Fuel Expenses", totalDebit: 15000, totalCredit: 0, balance: 15000 },
-  ];
-
   // Form state for new journal entry
   const [entryForm, setEntryForm] = useState({
     entryDate: new Date().toISOString().split("T")[0],
@@ -225,26 +79,18 @@ export default function GeneralLedger() {
       if (activeTab === "accounts") {
         const res = await fetch("/api/ledger/journal?type=accounts");
         const data = await res.json();
-        setAccounts(data.length > 0 ? data : staticAccounts);
+        setAccounts(data);
       } else if (activeTab === "entries") {
         const res = await fetch("/api/ledger/journal?type=entries");
         const data = await res.json();
-        setEntries(data.length > 0 ? data : staticEntries);
+        setEntries(data);
       } else if (activeTab === "balances") {
         const res = await fetch("/api/ledger/journal?type=balances");
         const data = await res.json();
-        setBalances(data.length > 0 ? data : staticBalances);
+        setBalances(data);
       }
     } catch (error) {
-      console.error("Error fetching data, using static data:", error);
-      // Fallback to static data on error
-      if (activeTab === "accounts") {
-        setAccounts(staticAccounts);
-      } else if (activeTab === "entries") {
-        setEntries(staticEntries);
-      } else if (activeTab === "balances") {
-        setBalances(staticBalances);
-      }
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -261,12 +107,7 @@ export default function GeneralLedger() {
       alert(data.message);
       fetchData();
     } catch (error) {
-      console.error("Error seeding accounts, loading demo data:", error);
-      // Load demo data instead
-      setAccounts(staticAccounts);
-      setEntries(staticEntries);
-      setBalances(staticBalances);
-      alert("Loaded demo data successfully!");
+      console.error("Error seeding accounts:", error);
     }
   };
 
@@ -769,7 +610,7 @@ export default function GeneralLedger() {
                           required
                         >
                           <option value={0}>Select Account</option>
-                          {(accounts.length > 0 ? accounts : staticAccounts).map((acc) => (
+                          {accounts.map((acc) => (
                             <option key={acc.id} value={acc.id}>
                               {acc.accountCode} - {acc.accountName}
                             </option>

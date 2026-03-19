@@ -14,7 +14,7 @@ import {
 
 const tabs = [
   { name: "Collections Management", href: "/dashboard", icon: HandCoins },
-  { name: "Budget and Cost Allocation", href: "/dashboard/module2", icon: PieChart },
+  // { name: "Budget and Cost Allocation", href: "/dashboard/module2", icon: PieChart },
   { name: "Expense Tracking & Tax", href: "/dashboard/module3", icon: Receipt },
   { name: "General Ledger", href: "/dashboard/module4", icon: BookOpen },
   { name: "Financial Reporting", href: "/dashboard/module5", icon: BarChart3 },

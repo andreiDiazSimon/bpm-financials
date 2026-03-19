@@ -15,9 +15,7 @@ export default function BudgetingAndCostAllocation() {
         <p className="text-[#5c5c5c] mb-2">
           This module is under construction.
         </p>
-        <p className="text-sm text-[#5c5c5c]">
-          Check back soon for updates.
-        </p>
+        <p className="text-sm text-[#5c5c5c]">Check back soon for updates.</p>
       </div>
     </div>
   );

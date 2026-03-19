@@ -25,3 +25,25 @@ model OtpCode {
   @@schema("public")
 }
 
+model gago {
+  id   Int     @id @default(autoincrement())
+  gago String? @db.VarChar
+
+  @@schema("financials")
+}
+
+model Reimbursement {
+  id                   String    @id
+  expenseReportId      String    @unique
+  reimbursementAmount  Float
+  paymentMethod        String
+  paymentDate          DateTime?
+  status               String
+  sourceSystem         String    @default("hr2")
+  hr2ReimbursementId   String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime
+
+  @@schema("financials")
+  @@index([status])
+}

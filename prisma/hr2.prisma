@@ -1,0 +1,621 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/client-hr2"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model claim_validations {
+  id               String          @id
+  expenseReportId  String          @unique
+  validationStatus String
+  approvedAmount   Float?
+  rejectionReason  String?
+  validationDate   DateTime        @default(now())
+  expense_reports  expense_reports @relation(fields: [expenseReportId], references: [id], onDelete: Cascade)
+}
+
+model competency_gaps {
+  id                  String                @id
+  employeeId          String
+  skillId             String
+  jobRoleId           String?
+  currentLevel        Int
+  requiredLevel       Int
+  severity            GapSeverity
+  status              GapStatus             @default(Open)
+  isAutoDetected      Boolean               @default(false)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  employees           employees             @relation(fields: [employeeId], references: [id])
+  job_roles           job_roles?            @relation(fields: [jobRoleId], references: [id])
+  skills              skills                @relation(fields: [skillId], references: [id])
+  development_actions development_actions[]
+  gap_resolutions     gap_resolutions[]
+
+  @@unique([employeeId, skillId])
+  @@index([jobRoleId])
+  @@index([severity])
+  @@index([skillId])
+  @@index([status])
+}
+
+model course_enrollments {
+  id                 String           @id
+  employeeId         String
+  trainingCourseId   String
+  enrollmentDate     DateTime         @default(now())
+  completedAt        DateTime?
+  status             EnrollmentStatus @default(Enrolled)
+  scheduleSyncStatus String           @default("Pending_HR3")
+  hr3TimesheetId     String?
+  employees          employees        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  training_courses   training_courses @relation(fields: [trainingCourseId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, trainingCourseId])
+  @@index([employeeId])
+  @@index([scheduleSyncStatus])
+  @@index([trainingCourseId])
+}
+
+model critical_roles {
+  id                String         @id
+  roleName          String
+  jobRoleId         String?
+  successorNeededBy DateTime
+  job_roles         job_roles?     @relation(fields: [jobRoleId], references: [id])
+  talent_pools      talent_pools[]
+
+  @@index([jobRoleId])
+  @@index([successorNeededBy])
+}
+
+model development_actions {
+  id                   String                @id
+  employeeId           String?
+  talentPoolId         String?
+  competencyGapId      String?
+  actionType           String
+  title                String?
+  description          String
+  dueDate              DateTime?
+  targetCompletionDate DateTime?
+  relatedTrainingId    String?
+  relatedELearningId   String?
+  status               String                @default("Not Started")
+  createdAt            DateTime              @default(now())
+  competency_gaps      competency_gaps?      @relation(fields: [competencyGapId], references: [id])
+  employees            employees?            @relation(fields: [employeeId], references: [id])
+  elearning_deliveries elearning_deliveries? @relation(fields: [relatedELearningId], references: [id])
+  training_courses     training_courses?     @relation(fields: [relatedTrainingId], references: [id])
+  talent_pools         talent_pools?         @relation(fields: [talentPoolId], references: [id])
+
+  @@index([dueDate])
+  @@index([employeeId])
+  @@index([status])
+}
+
+model development_plans {
+  id          String    @id
+  employeeId  String
+  action      String
+  targetSkill String
+  dueDate     DateTime
+  status      String
+  employees   employees @relation(fields: [employeeId], references: [id])
+}
+
+model documents {
+  id              String          @id
+  expenseReportId String
+  fileName        String
+  docType         String
+  uploadDate      DateTime        @default(now())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime
+  expense_reports expense_reports @relation(fields: [expenseReportId], references: [id], onDelete: Cascade)
+
+  @@index([expenseReportId])
+}
+
+model elearning_deliveries {
+  id                  String                @id
+  title               String
+  description         String?
+  deliveryType        String
+  courseUrl           String?
+  duration            Int?
+  isActive            Boolean               @default(true)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  development_actions development_actions[]
+  gap_resolutions     gap_resolutions[]
+  learning_materials  learning_materials[]
+  learning_progress   learning_progress[]
+  quizzes             quizzes[]
+  skills              skills[]              @relation("ELearningDevelopsSkill")
+}
+
+model employee_certifications {
+  id                  String   @id
+  employeeId          String
+  certName            String
+  issuingBody         String
+  expiryDate          DateTime
+  renewalPeriodMonths Int
+  status              String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime
+
+  @@index([employeeId])
+  @@index([expiryDate])
+  @@index([status])
+}
+
+model employee_skills {
+  id                                                String     @id
+  employeeId                                        String
+  skillId                                           String
+  proficiencyLevel                                  Int
+  assessmentDate                                    DateTime   @default(now())
+  assessedById                                      String?
+  createdAt                                         DateTime   @default(now())
+  updatedAt                                         DateTime
+  employees_employee_skills_assessedByIdToemployees employees? @relation("employee_skills_assessedByIdToemployees", fields: [assessedById], references: [id])
+  employees_employee_skills_employeeIdToemployees   employees  @relation("employee_skills_employeeIdToemployees", fields: [employeeId], references: [id], onDelete: Cascade)
+  skills                                            skills     @relation(fields: [skillId], references: [id])
+
+  @@unique([employeeId, skillId])
+  @@index([employeeId])
+  @@index([skillId])
+}
+
+model employees {
+  id                                                              String                    @id
+  name                                                            String
+  department                                                      String
+  email                                                           String                    @unique
+  password                                                        String
+  role                                                            Role                      @default(EMPLOYEE)
+  jobRoleId                                                       String?
+  jobTitle                                                        String?
+  createdAt                                                       DateTime                  @default(now())
+  updatedAt                                                       DateTime
+  deletedAt                                                       DateTime?
+  competency_gaps                                                 competency_gaps[]
+  course_enrollments                                              course_enrollments[]
+  development_actions                                             development_actions[]
+  development_plans                                               development_plans[]
+  employee_skills_employee_skills_assessedByIdToemployees         employee_skills[]         @relation("employee_skills_assessedByIdToemployees")
+  employee_skills_employee_skills_employeeIdToemployees           employee_skills[]         @relation("employee_skills_employeeIdToemployees")
+  job_roles                                                       job_roles?                @relation(fields: [jobRoleId], references: [id])
+  expense_reports                                                 expense_reports[]
+  field_evaluations_field_evaluations_employeeIdToemployees       field_evaluations[]       @relation("field_evaluations_employeeIdToemployees")
+  field_evaluations_field_evaluations_evaluatorIdToemployees      field_evaluations[]       @relation("field_evaluations_evaluatorIdToemployees")
+  learning_progress                                               learning_progress[]
+  notifications                                                   notifications[]
+  performance_evaluations                                         performance_evaluations[]
+  performance_reviews_performance_reviews_employeeIdToemployees   performance_reviews[]     @relation("performance_reviews_employeeIdToemployees")
+  performance_reviews_performance_reviews_reviewerIdToemployees   performance_reviews[]     @relation("performance_reviews_reviewerIdToemployees")
+  quiz_attempts                                                   quiz_attempts[]
+  skill_reassessments_skill_reassessments_assessedByIdToemployees skill_reassessments[]     @relation("skill_reassessments_assessedByIdToemployees")
+  skill_reassessments_skill_reassessments_employeeIdToemployees   skill_reassessments[]     @relation("skill_reassessments_employeeIdToemployees")
+  succession_candidates                                           succession_candidates[]
+  talent_pools                                                    talent_pools[]
+
+  @@index([email])
+  @@index([jobRoleId])
+}
+
+model expense_reports {
+  id                String             @id
+  employeeId        String
+  expenseCategory   String
+  totalAmount       Float
+  submissionDate    DateTime           @default(now())
+  status            String             @default("Submitted")
+  description       String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime
+  claim_validations claim_validations?
+  documents         documents[]
+  employees         employees          @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  reimbursements    reimbursements?
+
+  @@index([employeeId])
+  @@index([status])
+}
+
+model field_evaluations {
+  id                                                 String     @id
+  employeeId                                         String
+  evaluatorId                                        String?
+  externalHr1Id                                      String?    @unique
+  hr1SyncStatus                                      String     @default("Pending")
+  evaluationDate                                     DateTime   @default(now())
+  safetyComplianceRating                             Int
+  efficiencyRating                                   Int
+  performanceRating                                  Int
+  createdAt                                          DateTime   @default(now())
+  updatedAt                                          DateTime
+  employees_field_evaluations_employeeIdToemployees  employees  @relation("field_evaluations_employeeIdToemployees", fields: [employeeId], references: [id], onDelete: Cascade)
+  employees_field_evaluations_evaluatorIdToemployees employees? @relation("field_evaluations_evaluatorIdToemployees", fields: [evaluatorId], references: [id])
+
+  @@index([employeeId])
+  @@index([hr1SyncStatus])
+}
+
+model gap_resolutions {
+  id                       String                @id
+  competencyGapId          String
+  trainingCourseId         String?
+  eLearningDeliveryId      String?
+  resolvedByReassessmentId String?
+  resolvedAt               DateTime?
+  competency_gaps          competency_gaps       @relation(fields: [competencyGapId], references: [id])
+  elearning_deliveries     elearning_deliveries? @relation(fields: [eLearningDeliveryId], references: [id])
+  skill_reassessments      skill_reassessments?  @relation(fields: [resolvedByReassessmentId], references: [id])
+  training_courses         training_courses?     @relation(fields: [trainingCourseId], references: [id])
+
+  @@index([competencyGapId])
+}
+
+model integration_logs {
+  id              String   @id
+  targetSystem    String
+  payloadType     String
+  status          String   @default("Pending")
+  requestPayload  Json?
+  responsePayload Json?
+  errorMessage    String?
+  retryCount      Int      @default(0)
+  externalId      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
+
+  @@index([createdAt])
+  @@index([targetSystem, status])
+}
+
+model job_role_skills {
+  id            String    @id
+  jobRoleId     String
+  skillId       String
+  requiredLevel Int
+  job_roles     job_roles @relation(fields: [jobRoleId], references: [id], onDelete: Cascade)
+  skills        skills    @relation(fields: [skillId], references: [id])
+
+  @@unique([jobRoleId, skillId])
+}
+
+model job_roles {
+  id              String            @id
+  name            String
+  department      String
+  description     String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  competency_gaps competency_gaps[]
+  critical_roles  critical_roles[]
+  employees       employees[]
+  job_role_skills job_role_skills[]
+
+  @@index([department])
+}
+
+model learning_materials {
+  id                   String               @id
+  eLearningDeliveryId  String
+  title                String
+  materialType         String
+  contentUrl           String?
+  contentText          String?
+  orderIndex           Int                  @default(0)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime
+  elearning_deliveries elearning_deliveries @relation(fields: [eLearningDeliveryId], references: [id], onDelete: Cascade)
+
+  @@index([eLearningDeliveryId])
+  @@index([orderIndex])
+}
+
+model learning_progress {
+  id                   String               @id
+  employeeId           String
+  eLearningDeliveryId  String
+  assignedDate         DateTime             @default(now())
+  dueDate              DateTime?
+  progressPercentage   Int                  @default(0)
+  status               LearningStatus       @default(Assigned)
+  completedAt          DateTime?
+  elearning_deliveries elearning_deliveries @relation(fields: [eLearningDeliveryId], references: [id], onDelete: Cascade)
+  employees            employees            @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  quiz_attempts        quiz_attempts[]
+
+  @@unique([employeeId, eLearningDeliveryId])
+  @@index([dueDate])
+  @@index([employeeId])
+  @@index([status])
+}
+
+model notifications {
+  id         String           @id
+  employeeId String
+  type       NotificationType
+  title      String
+  message    String
+  isRead     Boolean          @default(false)
+  readAt     DateTime?
+  linkUrl    String?
+  createdAt  DateTime         @default(now())
+  employees  employees        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([isRead])
+}
+
+model performance_evaluations {
+  id             String    @id
+  employeeId     String
+  cycleId        String?
+  externalHr1Id  String?   @unique
+  hr1SyncStatus  String    @default("Pending")
+  evaluationDate DateTime  @default(now())
+  overallRating  Float?
+  goals          String?
+  strengths      String?
+  improvements   String?
+  comments       String?
+  status         String    @default("Pending")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime
+  employees      employees @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([cycleId])
+  @@index([employeeId])
+  @@index([hr1SyncStatus])
+}
+
+model performance_reviews {
+  id                                                  String     @id
+  employeeId                                          String
+  reviewerId                                          String?
+  externalHr1Id                                       String?    @unique
+  hr1SyncStatus                                       String     @default("Pending")
+  reviewPeriod                                        String
+  overallRating                                       Float
+  strengths                                           String?
+  areasForImprovement                                 String?
+  goals                                               String?
+  comments                                            String?
+  status                                              String     @default("Draft")
+  createdAt                                           DateTime   @default(now())
+  updatedAt                                           DateTime
+  employees_performance_reviews_employeeIdToemployees employees  @relation("performance_reviews_employeeIdToemployees", fields: [employeeId], references: [id], onDelete: Cascade)
+  employees_performance_reviews_reviewerIdToemployees employees? @relation("performance_reviews_reviewerIdToemployees", fields: [reviewerId], references: [id])
+
+  @@index([employeeId])
+  @@index([hr1SyncStatus])
+}
+
+model questions {
+  id           String         @id
+  quizId       String
+  questionText String
+  questionType String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  quizzes      quizzes        @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  quiz_options quiz_options[]
+
+  @@index([quizId])
+}
+
+model quiz_attempts {
+  id                 String             @id
+  employeeId         String
+  quizId             String
+  learningProgressId String?
+  score              Float
+  passed             Boolean
+  attemptDate        DateTime           @default(now())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime
+  employees          employees          @relation(fields: [employeeId], references: [id])
+  learning_progress  learning_progress? @relation(fields: [learningProgressId], references: [id])
+  quizzes            quizzes            @relation(fields: [quizId], references: [id])
+
+  @@index([employeeId])
+  @@index([quizId])
+}
+
+model quiz_options {
+  id         String    @id
+  questionId String
+  optionText String
+  isCorrect  Boolean
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime
+  questions  questions @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model quizzes {
+  id                   String               @id
+  eLearningDeliveryId  String
+  title                String
+  passingScore         Float
+  isActive             Boolean              @default(true)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime
+  questions            questions[]
+  quiz_attempts        quiz_attempts[]
+  elearning_deliveries elearning_deliveries @relation(fields: [eLearningDeliveryId], references: [id], onDelete: Cascade)
+
+  @@index([eLearningDeliveryId])
+}
+
+model reimbursements {
+  id                   String          @id
+  expenseReportId      String          @unique
+  reimbursementAmount  Float
+  paymentMethod        String
+  paymentDate          DateTime?
+  status               String
+  payrollSyncStatus    String          @default("Not_Sent")
+  payrollTransactionId String?
+  financialsReceiptId  String?
+  financialsSyncStatus String          @default("Not_Sent")
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime
+  expense_reports      expense_reports @relation(fields: [expenseReportId], references: [id], onDelete: Cascade)
+
+  @@index([financialsSyncStatus])
+  @@index([payrollSyncStatus])
+}
+
+model skill_reassessments {
+  id                                                    String            @id
+  employeeId                                            String
+  skillId                                               String
+  previousLevel                                         Int
+  newLevel                                              Int
+  reassessmentDate                                      DateTime          @default(now())
+  assessedById                                          String?
+  reason                                                String?
+  trainingId                                            String?
+  createdAt                                             DateTime          @default(now())
+  gap_resolutions                                       gap_resolutions[]
+  employees_skill_reassessments_assessedByIdToemployees employees?        @relation("skill_reassessments_assessedByIdToemployees", fields: [assessedById], references: [id])
+  employees_skill_reassessments_employeeIdToemployees   employees         @relation("skill_reassessments_employeeIdToemployees", fields: [employeeId], references: [id], onDelete: Cascade)
+  skills                                                skills            @relation(fields: [skillId], references: [id])
+
+  @@index([assessedById])
+  @@index([employeeId])
+  @@index([skillId])
+}
+
+model skills {
+  id                   String                 @id
+  name                 String
+  category             String
+  description          String?
+  competency_gaps      competency_gaps[]
+  employee_skills      employee_skills[]
+  job_role_skills      job_role_skills[]
+  skill_reassessments  skill_reassessments[]
+  training_courses     training_courses[]     @relation("CourseDevelopsSkill")
+  elearning_deliveries elearning_deliveries[] @relation("ELearningDevelopsSkill")
+
+  @@index([category])
+}
+
+model succession_candidates {
+  id                   String               @id
+  employeeId           String
+  positionId           String
+  readiness            String
+  createdAt            DateTime             @default(now())
+  employees            employees            @relation(fields: [employeeId], references: [id])
+  succession_positions succession_positions @relation(fields: [positionId], references: [id])
+
+  @@index([employeeId])
+  @@index([positionId])
+}
+
+model succession_positions {
+  id                    String                  @id
+  positionName          String
+  department            String
+  criticalLevel         Int
+  createdAt             DateTime                @default(now())
+  succession_candidates succession_candidates[]
+}
+
+model talent_pools {
+  id                  String                @id
+  employeeId          String
+  criticalRoleId      String
+  readinessLevel      String
+  nominationSource    String
+  status              String                @default("Active")
+  development_actions development_actions[]
+  critical_roles      critical_roles        @relation(fields: [criticalRoleId], references: [id])
+  employees           employees             @relation(fields: [employeeId], references: [id])
+
+  @@index([criticalRoleId])
+  @@index([employeeId])
+  @@index([status])
+}
+
+model training_courses {
+  id                        String                @id
+  courseName                String
+  category                  String
+  durationHours             Int
+  startDate                 DateTime
+  status                    TrainingStatus        @default(Draft)
+  financialsBudgetRequestId String?
+  financialsBudgetStatus    String                @default("Not_Requested")
+  financialsApprovedAmount  Float?
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime
+  course_enrollments        course_enrollments[]
+  development_actions       development_actions[]
+  gap_resolutions           gap_resolutions[]
+  skills                    skills[]              @relation("CourseDevelopsSkill")
+
+  @@index([category])
+  @@index([financialsBudgetStatus])
+}
+
+enum EnrollmentStatus {
+  Enrolled
+  InProgress
+  Completed
+  Cancelled
+}
+
+enum GapSeverity {
+  Critical
+  High
+  Medium
+  Low
+}
+
+enum GapStatus {
+  Open
+  InProgress
+  Resolved
+}
+
+enum LearningStatus {
+  Assigned
+  InProgress
+  Completed
+}
+
+enum NotificationType {
+  TRAINING_ASSIGNED
+  LEARNING_ASSIGNED
+  QUIZ_RESULT
+  CLAIM_STATUS
+  DEVELOPMENT_ACTION
+  SYSTEM_ALERT
+}
+
+enum Role {
+  EMPLOYEE
+  HR_STAFF
+  HR_MANAGER
+  ADMIN
+}
+
+enum TrainingStatus {
+  Draft
+  Scheduled
+  Ongoing
+  Completed
+  Cancelled
+}
